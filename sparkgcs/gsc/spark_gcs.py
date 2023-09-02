@@ -12,8 +12,8 @@ def main():
     spark.sparkContext.setLogLevel("ERROR")
     sc=spark.sparkContext
     conf = spark.sparkContext._jsc.hadoopConfiguration()
-    conf.set("fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
-    conf.set("fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")
+    conf.set("spark.hadoop.fs.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFileSystem")
+    conf.set("spark.hadoop.fs.AbstractFileSystem.gs.impl", "com.google.cloud.hadoop.fs.gcs.GoogleHadoopFS")
     conf.set("google.cloud.auth.service.account.json.keyfile","/home/hduser/install/projectbigdata-395203-26f51bbb59ce.json")
     print("Data Transfer between HDFS to GCS and Vice versa")
     hdfs_df=spark.read.csv("hdfs://localhost:54310/user/hduser/datatotransfer/")
