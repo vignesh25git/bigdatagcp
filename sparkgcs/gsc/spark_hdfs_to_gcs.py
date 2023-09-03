@@ -32,22 +32,22 @@ def main():
 #service account to access gc with the private key
     path_to_private_key="/home/hduser/install/projectbigdata-395203-26f51bbb59ce.json"
 #check the file existence in the google cloud storage using google cloud storage api
-    if os.path.isfile(hdfs_path):
-        custstructtype1 = StructType([StructField("id", IntegerType(), False),
+#    if os.path.isfile(hdfs_path):
+    custstructtype1 = StructType([StructField("id", IntegerType(), False),
                                       StructField("custfname", StringType(), False),
                                       StructField("custlname", StringType(), True),
                                       StructField("custage", ShortType(), True),
                                       StructField("custprofession", StringType(), True)])
 
-        hdfs_df = spark.read.option("header", "false").\
+    hdfs_df = spark.read.option("header", "false").\
             option("delimiter", ",").\
             option("schema","custstructtype1").\
             csv(hdfs_path)
 
-        hdfs_df.show(2)
-        hdfs_df.coalesce(1).write.csv(gcs_path+file_name)
-        print(f'Todays dated file {file_name} has been transferred to GCS Successfully')
-    else:
-        print("File is not available in HDFS")
+    hdfs_df.show(2)
+    hdfs_df.coalesce(1).write.csv(gcs_path+file_name)
+    print(f'Todays dated file {file_name} has been transferred to GCS Successfully')
+#    else:
+#        print("File is not available in HDFS")
 
 main()
