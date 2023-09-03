@@ -2,7 +2,7 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql import SparkSession
 from datetime import date
-
+from google.cloud import storage
 
 import os
 
@@ -22,32 +22,33 @@ def main():
     conf.set("google.cloud.auth.service.account.json.keyfile","/home/hduser/install/projectbigdata-395203-26f51bbb59ce.json")
     print("Data Transfer between HDFS to GCS and Vice versa")
 # hive tble name
-    hdfs_path="hdfs://localhost:54310/user/hduser/datatotransfer/"
+#    hdfs_path="hdfs://localhost:54310/user/hduser/datatotransfer/"
     hive_table="gcs.customer"
 
 #getting current date
     curr_date =date.today().strftime("%m%d%y")
     file_name = "custs_"+curr_date
-    hdfs_path = hdfs_path+file_name
-    gcs_path = "gs://bigdatavicky1/"
+    gcs_path = "gs://bigdatavicky/"+file_name
 
 #service account to access gc with the private key
     path_to_private_key="/home/hduser/install/projectbigdata-395203-26f51bbb59ce.json"
-#check the file existence in the hdfs using os
-
-    if os.path.exists(hdfs_path):
+#check the file existence in the google cloud storage using google cloud storage api
+    client = storage.Client.from_service_account_json(json_credentials_path=path_to_private_key)
+    bucket = storage.Bucket(client,'bigdatavicky')
+    blob = bucket.blob(file_name)
+    if blob.exists():
         custstructtype1 = StructType([StructField("id", IntegerType(), False),
                                       StructField("custfname", StringType(), False),
                                       StructField("custlname", StringType(), True),
                                       StructField("custage", ShortType(), True),
                                       StructField("custprofession", StringType(), True)])
-        hdfs_df = spark.read.csv(hdfs_path,schema=custstructtype1,mode="dropmalformed")
-        hdfs_df.printSchema()
-        hdfs_df.show(3)
-        print("HDFS read is successful")
-        print("Writing to Google cloud is starting....")
-        hdfs_df.coalesce(1).write.csv(gcs_path + file_name)
-        print("write to gcs  is completed....")
+        gcs_df = spark.read.csv(gcs_path,schema=custstructtype1,mode="dropmalformed")
+        gcs_df.printSchema()
+        gcs_df.show(3)
+        print("GCS read is successful")
+        print("saving to Hive Table is starting....")
+        gcs_df.write.mode("overwrite").saveAsTable(hive_table)
+        print("saving to Hive Table is completed....")
     else:
         print("File is not available")
 

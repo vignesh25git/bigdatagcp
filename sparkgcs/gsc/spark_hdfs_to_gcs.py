@@ -2,7 +2,6 @@ from pyspark.sql.functions import *
 from pyspark.sql.types import *
 from pyspark.sql import SparkSession
 from datetime import date
-from google.cloud import storage
 
 import os
 
@@ -27,20 +26,28 @@ def main():
 #getting current date
     curr_date =date.today().strftime("%m%d%y")
     file_name = "custs_"+curr_date
-    gcs_path = "gs://bigdatavicky/"+file_name
+    gcs_path = "gs://bigdatavicky1/"
+    hdfs_path = hdfs_path+file_name
 
 #service account to access gc with the private key
     path_to_private_key="/home/hduser/install/projectbigdata-395203-26f51bbb59ce.json"
 #check the file existence in the google cloud storage using google cloud storage api
-    client = storage.Client.from_service_account_json(json_credentials_path=path_to_private_key)
-    bucket = storage.Bucket(client,'bigdatavicky')
-    blob = bucket.blob(file_name)
-    if blob.exists():
-        gcs_df = spark.read.option("header", "false").option("delimiter", ",").csv(gcs_path)
-        gcs_df.show(2)
-        gcs_df.coalesce(1).write.csv(hdfs_path+file_name)
-        print(f'Todays dated file {file_name} has been transferred to HDFS Successfully')
+    if os.path.exists(hdfs_path):
+        custstructtype1 = StructType([StructField("id", IntegerType(), False),
+                                      StructField("custfname", StringType(), False),
+                                      StructField("custlname", StringType(), True),
+                                      StructField("custage", ShortType(), True),
+                                      StructField("custprofession", StringType(), True)])
+
+        hdfs_df = spark.read.option("header", "false").\
+            option("delimiter", ",").\
+            option("schema","custstructtype1").\
+            csv(hdfs_path)
+
+        hdfs_df.show(2)
+        hdfs_df.coalesce(1).write.csv(gcs_path+file_name)
+        print(f'Todays dated file {file_name} has been transferred to GCS Successfully')
     else:
-        print("File is not available")
+        print("File is not available in HDFS")
 
 main()
