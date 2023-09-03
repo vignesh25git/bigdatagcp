@@ -32,7 +32,7 @@ def main():
 #service account to access gc with the private key
     path_to_private_key="/home/hduser/install/projectbigdata-395203-26f51bbb59ce.json"
 #check the file existence in the google cloud storage using google cloud storage api
-    if os.path.exists(hdfs_path):
+    if os.path.isfile(hdfs_path):
         custstructtype1 = StructType([StructField("id", IntegerType(), False),
                                       StructField("custfname", StringType(), False),
                                       StructField("custlname", StringType(), True),
