@@ -21,7 +21,7 @@ def main():
     conf.set("google.cloud.auth.service.account.json.keyfile","/home/hduser/install/projectbigdata-395203-26f51bbb59ce.json")
     print("Data Transfer between HDFS to GCS and Vice versa")
 # file path and file names
-    hdfs_path="hdfs://localhost:54310/user/hduser/datatotransfer/"
+    hdfs_path="hdfs://localhost:54310/user/hduser/datatotransfer/customer/"
 
 #getting current date
     curr_date =date.today().strftime("%m%d%y")
