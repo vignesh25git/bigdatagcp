@@ -37,3 +37,5 @@ def main():
     df.repartition(2).write.mode("overwrite").csv(gcs_path)
     print(f"Hive to GCS write completed successfully")
 
+main()
+
