@@ -26,3 +26,4 @@ else
 echo "`date` hive table creation part of the EL is completed successfully" &>> /tmp/gcp_hive_schedule.log
 fi
 echo "`date` gcloud hive ETL script is completed" &>> /tmp/gcp_hive_schedule.log
+echo "Completed"
