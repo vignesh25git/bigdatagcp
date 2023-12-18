@@ -1,5 +1,5 @@
 #!/bin/bash
-#source /home/hduser/.bashrc
+source /etc/zshrc
 loadts=$(date '+%Y-%m-%d-%H-%M-%S')
 echo "`date` gcloud hive ETL script is started"
 echo "`date` gcloud hive ETL script is started" &> /tmp/gcp_hive_schedule_$loadts.log
